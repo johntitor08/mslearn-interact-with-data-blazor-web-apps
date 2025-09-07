@@ -1,4 +1,7 @@
-﻿namespace BlazingPizza.Model
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace BlazingPizza.Model
 {
     public class Pizza
     {
@@ -6,17 +9,17 @@
         public const int MinimumSize = 9;
         public const int MaximumSize = 17;
 
-        public int Id { get; set; }
+        public int Id { get; set; }   // ✅ PK
 
         public int OrderId { get; set; }
-
-        public PizzaSpecial Special { get; set; }
+        public Order Order { get; set; }
 
         public int SpecialId { get; set; }
+        public PizzaSpecial Special { get; set; }
 
-        public int Size { get; set; }
+        public int Size { get; set; } = DefaultSize;
 
-        public List<PizzaTopping> Toppings { get; set; }
+        public List<PizzaTopping> Toppings { get; set; } = new();
 
         public decimal GetBasePrice()
         {
@@ -25,12 +28,14 @@
 
         public decimal GetTotalPrice()
         {
-            return GetBasePrice();
+            var total = GetBasePrice();
+            if (Toppings != null)
+            {
+                total += Toppings.Sum(t => t.Topping.Price);
+            }
+            return total;
         }
 
-        public string GetFormattedTotalPrice()
-        {
-            return GetTotalPrice().ToString("0.00");
-        }
+        public string GetFormattedTotalPrice() => GetTotalPrice().ToString("0.00");
     }
 }

@@ -2,8 +2,8 @@
 {
     public class UserInfo
     {
-        public bool IsAuthenticated { get; set; }
-
+        public int Id { get; set; }   // ✅ PK
         public string Name { get; set; }
+        public bool IsAuthenticated { get; set; }
     }
 }
