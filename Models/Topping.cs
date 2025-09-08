@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BlazingPizza.Model
+namespace BlazingPizza.Models
 {
     public class Topping
     {

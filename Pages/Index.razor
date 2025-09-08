@@ -1,7 +1,9 @@
 @page "/"
-@using BlazingPizza.Model
+@using BlazingPizza.Models
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@using BlazingPizza.Services
+@inject OrderState OrderState
 
 <div class="top-bar">
     <div class="logo">
@@ -15,30 +17,6 @@
 </div>
 
 <div class="content">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="order-contents">
-            <h2>Your Order</h2>
-            @if (order.Count == 0)
-            {
-                <p>No pizzas added yet.</p>
-            }
-            else
-            {
-                <ul class="order-details">
-                    @foreach (var pizza in order)
-                    {
-                        <li>
-                            @pizza.Special.Name (@pizza.Size") 
-                            <button class="btn btn-link btn-sm" @onclick="() => RemoveFromOrder(pizza)">❌</button>
-                        </li>
-                    }
-                </ul>
-                <p><strong>Total: @GetOrderTotal()</strong></p>
-            }
-        </div>
-    </div>
-
     <!-- Main content -->
     <div class="main">
         <h1>Blazing Pizza Specials</h1>
@@ -52,7 +30,10 @@
                             <span class="title">@special.Name</span>
                             <span>@special.Description</span>
                             <span class="price">@special.GetFormattedBasePrice()</span>
-                            <button class="btn btn-primary btn-sm mt-2" @onclick="() => AddToOrder(special)">Add to Order</button>
+                            <button class="btn btn-primary btn-sm mt-2" 
+                                    @onclick="() => OrderState.ShowConfigurePizzaDialog(special)">
+                                Add to Order
+                            </button>
                         </div>
                     </li>
                 }
@@ -89,7 +70,10 @@
                             <td>@pizza.Special.Description</td>
                             <td>@pizza.GetFormattedTotalPrice()</td>
                             <td>
-                                <button class="btn btn-primary btn-sm" @onclick="() => AddToOrder(pizza.Special, pizza.Size)">Add</button>
+                                <button class="btn btn-primary btn-sm"
+                                        @onclick="() => OrderState.ShowConfigurePizzaDialog(pizza.Special)">
+                                    Add
+                                </button>
                             </td>
                         </tr>
                     }
@@ -97,12 +81,53 @@
             </table>
         }
     </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        @if (OrderState.Order.Pizzas.Any())
+        {
+            <div class="order-contents">
+                <h2>Your order</h2>
+
+                @foreach (var configuredPizza in OrderState.Order.Pizzas)
+                {
+                    <div class="cart-item">
+                        <div class="title">@(configuredPizza.Size)" @configuredPizza.Special.Name</div>
+                        <div class="item-price">
+                            @configuredPizza.GetFormattedTotalPrice()
+                        </div>
+                        <a @onclick="@(() => OrderState.RemoveConfiguredPizza(configuredPizza))" class="delete-item">x</a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-cart">Choose a pizza<br>to get started</div>
+        }
+
+        <div class="order-total @(OrderState.Order.Pizzas.Any() ? "" : "hidden")">
+            Total:
+            <span class="total-price">@OrderState.Order.GetFormattedTotalPrice()</span>
+            <a href="checkout"
+               class="@(OrderState.Order.Pizzas.Count == 0 ? "btn btn-warning disabled" : "btn btn-warning")">
+                Order >
+            </a>
+        </div>
+    </div>
 </div>
+
+<!-- Configure Pizza Dialog -->
+@if (OrderState.ShowingConfigureDialog)
+{
+    <ConfigurePizzaDialog Pizza="OrderState.ConfiguringPizza"
+                          OnCancel="OrderState.CancelConfigurePizzaDialog"
+                          OnConfirm="OrderState.ConfirmConfigurePizzaDialog" />
+}
 
 @code {
     private List<PizzaSpecial> specials = new();
     private Pizza[] todaysPizzas;
-    private List<Pizza> order = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -132,22 +157,6 @@
                 new Pizza { Special = specials[2], Size = 16 }
             };
         }
-    }
-
-    private void AddToOrder(PizzaSpecial special, int size = 12)
-    {
-        order.Add(new Pizza { Special = special, Size = size });
-    }
-
-    private void RemoveFromOrder(Pizza pizza)
-    {
-        order.Remove(pizza);
-    }
-
-    private string GetOrderTotal()
-    {
-        decimal total = order.Sum(p => p.GetTotalPrice());
-        return $"£{total:F2}";
     }
 
     private void SignOut()

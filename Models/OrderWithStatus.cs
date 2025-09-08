@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BlazingPizza.Model
+namespace BlazingPizza.Models
 {
     public class OrderWithStatus
     {

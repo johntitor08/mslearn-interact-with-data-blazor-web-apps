@@ -78,18 +78,56 @@ body {
     margin-bottom: 1rem;
 }
 
-.order-details {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.order-details li {
+/* Sepet item */
+.cart-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.3rem 0;
+    padding: 0.4rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cart-item .title {
+    font-weight: 600;
+}
+
+.cart-item .item-price {
+    color: #8aff8a;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: 0.5rem;
+}
+
+.cart-item .delete-item {
+    color: #ff7777;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Sepet boşsa */
+.empty-cart {
+    text-align: center;
+    color: #bbb;
+    font-style: italic;
+    padding: 2rem 0;
+}
+
+/* Order total */
+.order-total {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-total .total-price {
+    color: #8aff8a;
+    font-size: 1.2rem;
 }
 
 /* Main content */
@@ -205,4 +243,46 @@ tr:hover {
     .pizza-info .price {
         font-size: 0.9rem;
     }
+}
+
+.dialog-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.dialog {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    width: 400px;
+    max-width: 95%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-title h2 {
+    margin: 0 0 0.5rem;
+}
+
+.dialog-body {
+    margin: 1rem 0;
+}
+
+.dialog-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.dialog-buttons .price {
+    font-weight: bold;
+    color: green;
 }

@@ -1,4 +1,4 @@
-using BlazingPizza.Model;
+using BlazingPizza.Models;
 
 namespace BlazingPizza.Data;
 
